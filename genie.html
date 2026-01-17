@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Génie en Herbe</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+/* ===== CSS PROFESSIONNEL ===== */
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.quiz-container {
+  background: #111;
+  width: 90%;
+  max-width: 650px;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+h1 {
+  text-align: center;
+  color: #00e6e6;
+  margin-bottom: 20px;
+}
+
+#question {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.btn {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #1f1f1f;
+  color: #fff;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background: #00e6e6;
+  color: #000;
+}
+
+.btn.correct {
+  background: #2ecc71;
+  color: #000;
+}
+
+.btn.wrong {
+  background: #e74c3c;
+}
+
+#next-btn {
+  display: none;
+  margin-top: 20px;
+  background: #00e6e6;
+  color: #000;
+  font-weight: bold;
+}
+
+#score {
+  text-align: center;
+  font-size: 18px;
+  margin-top: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="quiz-container">
+  <h1>🎓 Génie en Herbe</h1>
+  <div id="question">Question ici</div>
+  <div id="answers"></div>
+  <button id="next-btn" class="btn">Question suivante</button>
+  <div id="score"></div>
+</div>
+
+<script>
+// ===== JAVASCRIPT =====
+const questions = [
+{q:"Quel langage sert à structurer une page web ?", a:["CSS","HTML","Python","PHP"], c:1},
+{q:"Que signifie CSS ?", a:["Creative Style System","Cascading Style Sheets","Computer Style Sheet","Code Style System"], c:1},
+{q:"Quel langage rend une page interactive ?", a:["HTML","CSS","JavaScript","SQL"], c:2},
+{q:"HTML signifie ?", a:["HyperText Markup Language","HighText Machine Language","Hyper Tool Language","None"], c:0},
+{q:"Quelle balise crée un lien ?", a:["<div>","<a>","<p>","<link>"], c:1},
+{q:"Quelle propriété CSS change la couleur du texte ?", a:["background","font-style","color","text-align"], c:2},
+{q:"Quel langage est côté client ?", a:["PHP","Java","JavaScript","Python"], c:2},
+{q:"Quelle balise pour une image ?", a:["<img>","<image>","<src>","<pic>"], c:0},
+{q:"Quel est le rôle du CSS ?", a:["Créer BD","Styliser","Programmer","Sécuriser"], c:1},
+{q:"Quelle unité est relative ?", a:["px","cm","em","mm"], c:2},
+
+// ===== 40 AUTRES QUESTIONS =====
+{q:"Combien font 5 x 6 ?", a:["30","20","25","35"], c:0},
+{q:"Capitale de la RDC ?", a:["Brazzaville","Kinshasa","Goma","Lubumbashi"], c:1},
+{q:"Planète la plus proche du Soleil ?", a:["Vénus","Terre","Mercure","Mars"], c:2},
+{q:"Langage pour base de données ?", a:["HTML","CSS","SQL","JS"], c:2},
+{q:"Qui a inventé le web ?", a:["Bill Gates","Steve Jobs","Tim Berners-Lee","Elon Musk"], c:2},
+{q:"Couleur du drapeau RDC ?", a:["Bleu et rouge","Vert et jaune","Bleu, rouge, jaune","Noir et blanc"], c:2},
+{q:"Quel animal est le roi de la jungle ?", a:["Lion","Éléphant","Tigre","Panthère"], c:0},
+{q:"1 Ko = ?", a:["1000 octets","1024 octets","512 octets","2048 octets"], c:1},
+{q:"Quelle balise fait un paragraphe ?", a:["<p>","<h1>","<div>","<span>"], c:0},
+{q:"Quel est le plus grand océan ?", a:["Atlantique","Indien","Arctique","Pacifique"], c:3},
+{q:"Combien de continents ?", a:["5","6","7","8"], c:2},
+{q:"Langage serveur web ?", a:["CSS","HTML","PHP","XML"], c:2},
+{q:"Symbole du kilo ?", a:["k","kg","K","g"], c:0},
+{q:"Quel est le navigateur de Google ?", a:["Firefox","Edge","Chrome","Safari"], c:2},
+{q:"Langage pour mobile Android ?", a:["Swift","Kotlin","PHP","CSS"], c:1},
+{q:"Quelle propriété centre le texte ?", a:["align","text-align","float","center"], c:1},
+{q:"Quel pays a gagné la CAN 2015 ?", a:["RDC","Cameroun","Côte d'Ivoire","Nigeria"], c:2},
+{q:"HTML est un langage ?", a:["Programmation","Balisage","Base de données","Système"], c:1},
+{q:"Quelle balise titre ?", a:["<p>","<h1>","<title>","<head>"], c:1},
+{q:"Quel est 10² ?", a:["20","100","10","200"], c:1},
+{q:"Langage IA ?", a:["Python","HTML","CSS","SQL"], c:0},
+{q:"Propriété CSS pour marges ?", a:["padding","border","margin","space"], c:2},
+{q:"Quel est le plus grand pays ?", a:["USA","Canada","Chine","Russie"], c:3},
+{q:"Balise liste ?", a:["<ul>","<ol>","<li>","Toutes"], c:3},
+{q:"JavaScript est ?", a:["Compilé","Interprété","Assembleur","Machine"], c:1},
+{q:"Capitale de la France ?", a:["Lyon","Paris","Marseille","Nice"], c:1},
+{q:"Quel langage pour jeux web ?", a:["JS","HTML","CSS","Tous"], c:3},
+{q:"Quelle propriété CSS pour arrondir ?", a:["radius","border-radius","round","curve"], c:1},
+{q:"Créateur de Facebook ?", a:["Elon Musk","Jeff Bezos","Mark Zuckerberg","Bill Gates"], c:2},
+{q:"1 Mo = ?", a:["1000 Ko","1024 Ko","512 Ko","2048 Ko"], c:1}
+];
+
+let index = 0;
+let score = 0;
+
+const questionEl = document.getElementById("question");
+const answersEl = document.getElementById("answers");
+const nextBtn = document.getElementById("next-btn");
+const scoreEl = document.getElementById("score");
+
+function showQuestion() {
+  reset();
+  let q = questions[index];
+  questionEl.innerText = (index+1) + ". " + q.q;
+
+  q.a.forEach((answer, i) => {
+    const btn = document.createElement("button");
+    btn.innerText = answer;
+    btn.className = "btn";
+    btn.onclick = () => checkAnswer(i, btn);
+    answersEl.appendChild(btn);
+  });
+}
+
+function checkAnswer(i, btn) {
+  const correct = questions[index].c;
+  if (i === correct) {
+    btn.classList.add("correct");
+    score++;
+  } else {
+    btn.classList.add("wrong");
+  }
+  Array.from(answersEl.children).forEach(b => b.disabled = true);
+  nextBtn.style.display = "block";
+}
+
+function reset() {
+  answersEl.innerHTML = "";
+  nextBtn.style.display = "none";
+}
+
+nextBtn.onclick = () => {
+  index++;
+  if (index < questions.length) {
+    showQuestion();
+  } else {
+    questionEl.innerText = "🎉 Fin du jeu !";
+    answersEl.innerHTML = "";
+    scoreEl.innerText = `Score final : ${score} / ${questions.length}`;
+    nextBtn.style.display = "none";
+  }
+};
+
+showQuestion();
+</script>
+
+</body>
+</html>
